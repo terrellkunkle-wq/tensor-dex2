@@ -1,0 +1,72 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Tensor Replays</title>
+<style>
+:root{--bg:#f4f5f9;--card:#fff;--ink:#1b1f2a;--mute:#5d6577;--line:#dfe3ec;--acc:#5b3fd0;--chip:#eef0f6;--head:#1d2333}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#12141b;--card:#1b1e28;--ink:#e8eaf2;--mute:#9aa2b5;--line:#2c3140;--acc:#a28bff;--chip:#262a37;--head:#0d0f15}}
+:root[data-theme="dark"]{--bg:#12141b;--card:#1b1e28;--ink:#e8eaf2;--mute:#9aa2b5;--line:#2c3140;--acc:#a28bff;--chip:#262a37;--head:#0d0f15}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font:15px/1.5 system-ui,-apple-system,"Segoe UI",sans-serif}
+header{background:var(--head);color:#fff;padding:14px 16px}
+header .in{max-width:1180px;margin:0 auto;display:flex;align-items:center;gap:18px;flex-wrap:wrap}
+header b{font-size:18px;letter-spacing:.02em}
+header a{color:#cfc6ff;text-decoration:none}header a:hover{text-decoration:underline}
+main{max-width:1180px;margin:0 auto;padding:22px 16px 60px}
+h1{margin:0 0 4px;font-size:26px}
+.sub{color:var(--mute);margin:0 0 22px}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(340px,1fr));gap:18px}
+article{background:var(--card);border:1px solid var(--line);border-radius:12px;overflow:hidden;display:flex;flex-direction:column}
+video{width:100%;aspect-ratio:16/9;background:#000;display:block}
+.body{padding:12px 14px 14px}
+h2{margin:0 0 4px;font-size:17px}
+.meta{color:var(--mute);font-size:13px;margin-bottom:8px}
+.desc{margin:0 0 10px;font-size:14px}
+.chips{display:flex;flex-wrap:wrap;gap:4px}
+.chips a,.chips span{background:var(--chip);border-radius:6px;padding:1px 7px;font-size:12.5px;color:var(--ink);text-decoration:none}
+.chips a:hover{outline:1px solid var(--acc)}
+.lbl{font-size:12px;color:var(--mute);margin:8px 0 3px;text-transform:uppercase;letter-spacing:.05em}
+</style>
+</head>
+<body>
+<header><div class="in"><b>Tensor</b><a href="../">← Pokédex</a><a href="../#/rankings">Rankings</a><a href="../#/calc">Calculator</a></div></header>
+<main>
+<h1>Replays</h1>
+<p class="sub">Battles recorded on the Tensor server. Click a Pokémon to open its Pokédex entry.</p>
+<div class="grid" id="grid"></div>
+</main>
+<script>
+var R = [
+	{ f: '2026-10-25-contrary-et-supreme-overlord', t: 'Contrary and Supreme Overlord', d: 'Oct 25, 2026', len: 312, turns: '40 turns',
+	  desc: 'Hyper offense: Superpower, Overheat and Psycho Boost raise stats instead of lowering them (Contrary), Lithosapher hits with Magnitude 9 and Stone Edge, and Vargilien leads with Mind Wrath.',
+	  a: ['Vargilien', 'Lithosapher', 'Neutronomos', 'Nocturnus', 'Slythera', 'Asmodeus'], b: ['Clodsire', 'Dondozo', 'Slowbro', 'Lugia', 'Zamazenta', 'Ting-Lu'] },
+	{ f: 'guerre-des-meteos-88-tours', t: 'Weather War', d: 'Oct 2026', len: 706, turns: '88+ turns',
+	  desc: 'Deluge versus Scorched Earth, Chernobyl fallout, Revival Blessing and Double Osmium Bash: a war of attrition that goes past 88 turns.',
+	  a: ['Diluvorca', 'Calcinar', 'Kyogrouza', 'Urayne', 'Dredgear', 'Taravenger', 'Koramidon', 'Magiana', 'Burnexal', 'Lithosapher', 'Shifoo'], b: ['Arceus', 'Zygarde', 'Swampert', 'Tungsteeleal', 'Lugia', 'Corviknight'] },
+	{ f: '2026-10-25-terre-brulee', t: 'Scorched Earth', d: 'Oct 25, 2026', len: 280, turns: '34 turns',
+	  desc: 'Calcinar leads under Scorched Earth with Precipice Blades and Super Ignition, then Kyogrouza-Primal, Megzard, Pziktile and Haxornuk follow up.',
+	  a: ['Calcinar', 'Kyogrouza-Primal', 'Megzard', 'Pziktile', 'Incandeat', 'Haxornuk'], b: ['Arceus', 'Zygarde', 'Dondozo', 'Tyranitar', 'Lugia', 'Bronzong'] },
+	{ f: '2026-10-24-runes-et-permutate', t: 'Runes and Permutate', d: 'Oct 24, 2026', len: 465, turns: '58 turns',
+	  desc: 'Stacked Elder Runes, Stealth Rock and Spikes, then +5 priority Permutate on repeat: every opposing switch-in hurts.',
+	  a: ['Cornacol', 'Zenkei', 'Ferrumynx', 'Inuniferus', 'Tungsteeleal', 'Dustwing'], b: ['Arceus', 'Zygarde', 'Zamazenta', 'Tyranitar', 'Swampert', 'Goodra'] },
+	{ f: '2026-10-13-tensor-contre-stall-manche-2', t: 'Tensor vs. Stall — Game 2', d: 'Oct 13, 2026', len: 344, turns: '44 turns',
+	  desc: 'The rematch: Slythera, Taravenger (Glower, Septic Escape) and Mewfour (Moody) against a very heavy official defensive core.',
+	  a: ['Slythera', 'Taravenger', 'Magiana', 'Koramidon', 'Dredgear', 'Mewfour', 'Bugillion', 'Carchirin'], b: ['Toxapex', 'Corviknight', 'Chansey', 'Dondozo', 'Ting-Lu', 'Slowking'] },
+	{ f: '2026-10-13-tensor-contre-stall-manche-1', t: 'Tensor vs. Stall — Game 1', d: 'Oct 13, 2026', len: 357, turns: '45 turns',
+	  desc: 'First meeting between a 16-Pokémon Tensor team and an official stall team: Slythera, Aoseidon and Burnexal look for an opening.',
+	  a: ['Slythera', 'Aoseidon', 'Burnexal', 'Carchirin', 'Haxornuk', 'Urayne', 'Pixagma', 'Shifoo'], b: ['Giratina', 'Chansey', 'Toxapex', 'Dondozo', 'Zamazenta', 'Tungsteeleal'] },
+];
+function id(s) { return String(s).toLowerCase().replace(/[^a-z0-9]+/g, ''); }
+function mmss(s) { s = Math.round(s); return Math.floor(s / 60) + ' min ' + String(s % 60).padStart(2, '0'); }
+function chips(list) { return list.map(function (n) { return '<a href="../#/pokemon/' + id(n) + '">' + n + '</a>'; }).join(''); }
+document.getElementById('grid').innerHTML = R.map(function (r) {
+	return '<article><video controls preload="none" playsinline poster="' + r.f + '.jpg"><source src="' + r.f + '.mp4" type="video/mp4"></video>' +
+		'<div class="body"><h2>' + r.t + '</h2><div class="meta">' + r.d + ' · ' + mmss(r.len) + ' · ' + r.turns + '</div><p class="desc">' + r.desc + '</p>' +
+		'<div class="lbl">Tensor team (Sar Ovii)</div><div class="chips">' + chips(r.a) + '</div>' +
+		'<div class="lbl">Opponent (Yali Ou, excerpt)</div><div class="chips">' + chips(r.b) + '</div></div></article>';
+}).join('');
+</script>
+</body>
+</html>
